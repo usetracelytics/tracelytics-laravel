@@ -1,0 +1,33 @@
+{
+    "name": "tracelytics/tracelytics-laravel",
+    "description": "Official Tracelytics AI Observability & Exception Tracking SDK for Laravel",
+    "type": "library",
+    "license": "MIT",
+    "keywords": ["tracelytics", "observability", "error-tracking", "ai-rca", "sentry-alternative"],
+    "authors": [
+        {
+            "name": "Tracelytics Engineering Team",
+            "email": "engineering@tracelytics.io"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "illuminate/support": "^10.0 | ^11.0 | ^12.0 | ^13.0",
+        "guzzlehttp/guzzle": "^7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tracelytics\\Laravel\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Tracelytics\\Laravel\\TracelyticsServiceProvider"
+            ],
+            "aliases": {
+                "Tracelytics": "Tracelytics\\Laravel\\Facades\\Tracelytics"
+            }
+        }
+    }
+}
