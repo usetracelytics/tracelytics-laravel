@@ -33,6 +33,41 @@ class TracelyticsServiceProvider extends ServiceProvider
 
         // Register Exception Report Listener
         $this->registerExceptionHandler();
+
+        // Register Automatic Breadcrumbs (HTTP & DB Queries)
+        $this->registerAutomaticBreadcrumbs();
+    }
+
+    protected function registerAutomaticBreadcrumbs(): void
+    {
+        try {
+            /** @var TracelyticsClient $client */
+            $client = $this->app->make(TracelyticsClient::class);
+
+            // 1. HTTP Request / Console Command Breadcrumb
+            if (!$this->app->runningInConsole() && function_exists('request') && request()) {
+                $client->addBreadcrumb('http', request()->method() . ' ' . request()->path(), [
+                    'full_url' => request()->fullUrl(),
+                    'ip' => request()->ip(),
+                ]);
+            } elseif ($this->app->runningInConsole()) {
+                $client->addBreadcrumb('system', 'Artisan console command executed', [
+                    'command' => implode(' ', $_SERVER['argv'] ?? []),
+                ]);
+            }
+
+            // 2. Database Query Listeners
+            if ($this->app->bound('db')) {
+                $this->app['db']->listen(function ($query) use ($client) {
+                    $client->addBreadcrumb('db', $query->sql, [
+                        'time_ms' => $query->time,
+                        'connection' => $query->connectionName,
+                    ]);
+                });
+            }
+        } catch (Throwable $e) {
+            // Silently swallow binding errors
+        }
     }
 
     protected function registerExceptionHandler(): void
