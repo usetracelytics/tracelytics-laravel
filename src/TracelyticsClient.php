@@ -124,7 +124,7 @@ class TracelyticsClient
             'stacktrace' => [
                 'frames' => $frames,
             ],
-            'user_context' => $userContext,
+            'user_context' => empty($userContext) ? (object) [] : $userContext,
             'request_context' => $requestContext,
             'tags' => array_merge([
                 'platform' => 'laravel',
