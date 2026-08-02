@@ -27,6 +27,10 @@ class TracelyticsTestCommand extends Command
         }
 
         try {
+            $client->addBreadcrumb('system', 'Booted Artisan console test environment');
+            $client->addBreadcrumb('auth', 'Verified TRACELYTICS_API_KEY configuration');
+            $client->addBreadcrumb('telemetry', 'Prepared test exception payload for ingestion API');
+
             $testException = new Exception('Tracelytics Test Exception: Verification successful!');
             $eventId = $client->captureException($testException, [
                 'is_test' => true,

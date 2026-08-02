@@ -32,6 +32,19 @@ class TracelyticsClient
         ]);
     }
 
+    protected array $breadcrumbs = [];
+
+    public function addBreadcrumb(string $category, string $message, array $data = []): self
+    {
+        $this->breadcrumbs[] = [
+            'category' => $category,
+            'message' => $message,
+            'data' => $data,
+            'timestamp' => date('H:i:s'),
+        ];
+        return $this;
+    }
+
     public function captureException(Throwable $exception, array $extraContext = []): ?string
     {
         if (!$this->enabled || empty($this->apiKey)) {
@@ -126,6 +139,7 @@ class TracelyticsClient
             ],
             'user_context' => empty($userContext) ? (object) [] : $userContext,
             'request_context' => $requestContext,
+            'breadcrumbs' => $this->breadcrumbs,
             'tags' => array_merge([
                 'platform' => 'laravel',
                 'php_version' => PHP_VERSION,
